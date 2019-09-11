@@ -1,13 +1,15 @@
-provider "aws" {}
-
-locals {
-  iam_role_arn = "${var.iam_role_arn == "" ? join("", aws_iam_role.this.*.arn) : var.iam_role_arn}"
+provider "aws" {
 }
 
-data "aws_partition" "current" {}
+locals {
+  iam_role_arn = var.iam_role_arn == null ? join("", aws_iam_role.this.*.arn) : var.iam_role_arn
+}
+
+data "aws_partition" "current" {
+}
 
 data "aws_iam_policy_document" "config_assume_role" {
-  count = "${var.create_config && var.iam_role_arn == "" ? 1 : 0}"
+  count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -20,13 +22,13 @@ data "aws_iam_policy_document" "config_assume_role" {
 }
 
 data "aws_iam_policy_document" "config" {
-  count = "${var.create_config && var.iam_role_arn == "" ? 1 : 0}"
+  count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
   statement {
     actions   = ["s3:PutObject*"]
     resources = ["arn:${data.aws_partition.current.partition}:s3:::${var.config_bucket}/AWSLogs/${var.account_id}/*"]
 
-    condition = {
+    condition {
       test     = "StringLike"
       variable = "s3:x-amz-acl"
       values   = ["bucket-owner-full-control"]
@@ -40,69 +42,70 @@ data "aws_iam_policy_document" "config" {
 }
 
 resource "aws_iam_role" "this" {
-  count = "${var.create_config && var.iam_role_arn == "" ? 1 : 0}"
+  count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
   name               = "config-continuous-monitoring"
-  assume_role_policy = "${data.aws_iam_policy_document.config_assume_role.json}"
-  tags               = "${var.tags}"
+  assume_role_policy = data.aws_iam_policy_document.config_assume_role[0].json
+  tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "this" {
-  count = "${var.create_config && var.iam_role_arn == "" ? 1 : 0}"
+  count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
   name   = "config-continuous-monitoring"
-  role   = "${aws_iam_role.this.id}"
-  policy = "${data.aws_iam_policy_document.config.json}"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.config[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  count = "${var.create_config && var.iam_role_arn == "" ? 1 : 0}"
+  count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
-  role       = "${aws_iam_role.this.name}"
+  role       = aws_iam_role.this[0].name
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSConfigRole"
 }
 
 resource "aws_sns_topic" "this" {
-  count = "${var.create_config ? 1 : 0}"
+  count = var.create_config ? 1 : 0
 
   name = "config-topic"
 }
 
 resource "aws_config_configuration_recorder" "this" {
-  count = "${var.create_config ? 1 : 0}"
+  count = var.create_config ? 1 : 0
 
-  name     = "${var.name}"
-  role_arn = "${local.iam_role_arn}"
+  name     = var.name
+  role_arn = local.iam_role_arn
 
-  recording_group = {
+  recording_group {
     all_supported                 = "true"
     include_global_resource_types = "true"
   }
 
   depends_on = [
-    "aws_iam_role_policy.this",
-    "aws_iam_role_policy_attachment.this",
+    aws_iam_role_policy.this,
+    aws_iam_role_policy_attachment.this,
   ]
 }
 
 resource "aws_config_delivery_channel" "this" {
-  count = "${var.create_config ? 1 : 0}"
+  count = var.create_config ? 1 : 0
 
-  name           = "${var.name}"
-  s3_bucket_name = "${var.config_bucket}"
-  sns_topic_arn  = "${aws_sns_topic.this.arn}"
+  name           = var.name
+  s3_bucket_name = var.config_bucket
+  sns_topic_arn  = aws_sns_topic.this[0].arn
 
   snapshot_delivery_properties {
-    delivery_frequency = "${var.snapshot_delivery_frequency}"
+    delivery_frequency = var.snapshot_delivery_frequency
   }
 
-  depends_on = ["aws_config_configuration_recorder.this"]
+  depends_on = [aws_config_configuration_recorder.this]
 }
 
 resource "aws_config_configuration_recorder_status" "this" {
-  count = "${var.create_config ? 1 : 0}"
+  count = var.create_config ? 1 : 0
 
-  name       = "${aws_config_configuration_recorder.this.name}"
+  name       = aws_config_configuration_recorder.this[0].name
   is_enabled = true
-  depends_on = ["aws_config_delivery_channel.this"]
+  depends_on = [aws_config_delivery_channel.this]
 }
+
