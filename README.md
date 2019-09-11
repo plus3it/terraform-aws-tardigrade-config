@@ -6,13 +6,13 @@ Manage AWS Config
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| account\_id | AWS Account ID | string | `""` | no |
-| config\_bucket | Name of S3 bucket for AWS Config inventory; bucket must already exist | string | `""` | no |
+| account\_id | AWS Account ID | string | `"null"` | no |
+| config\_bucket | Name of S3 bucket for AWS Config inventory; bucket must already exist | string | `"null"` | no |
 | create\_config | Controls whether to create the AWS Config | string | `"true"` | no |
-| iam\_role\_arn | (Optional) ARN for the IAM role to attach to the config recorder. If blank, a minimal role will be created | string | `""` | no |
+| iam\_role\_arn | (Optional) ARN for the IAM role to attach to the config recorder. If blank, a minimal role will be created | string | `"null"` | no |
 | name | Name of the AWS Config recorder | string | `"default"` | no |
 | snapshot\_delivery\_frequency | Frequency with which AWS Config recurringly delivers configuration snapshots, see <https://docs.aws.amazon.com/config/latest/APIReference/API_ConfigSnapshotDeliveryProperties.html#API_ConfigSnapshotDeliveryProperties_Contents> | string | `"TwentyFour_Hours"` | no |
-| tags | Map of tags to apply to the resources | map | `<map>` | no |
+| tags | Map of tags to apply to the resources | map(string) | `<map>` | no |
 
 ## Outputs
 
