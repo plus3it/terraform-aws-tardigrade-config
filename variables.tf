@@ -1,5 +1,6 @@
 variable "create_config" {
   description = "Controls whether to create the AWS Config"
+  type        = bool
   default     = true
 }
 
@@ -38,4 +39,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
