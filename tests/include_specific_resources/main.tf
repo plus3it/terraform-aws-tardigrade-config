@@ -16,14 +16,15 @@ resource "aws_s3_bucket" "this" {
   force_destroy = true
 }
 
-module "basic_create" {
+module "include_specific_resources" {
   source = "../../"
   providers = {
     aws = aws
   }
 
-  create_config = true
-  name          = "tardigrade-config-${random_string.this.result}"
-  account_id    = data.aws_caller_identity.current.account_id
-  config_bucket = aws_s3_bucket.this.id
+  create_config  = true
+  name           = "tardigrade-config-${random_string.this.result}"
+  account_id     = data.aws_caller_identity.current.account_id
+  config_bucket  = aws_s3_bucket.this.id
+  resource_types = ["AWS::EC2::Instance", "AWS::CloudTrail::Trail"]
 }

@@ -3,6 +3,7 @@ provider "aws" {
 
 locals {
   iam_role_arn = var.iam_role_arn == null ? join("", aws_iam_role.this.*.arn) : var.iam_role_arn
+  record_all   = length(var.include_resource_types) == 0 ? true : false
 }
 
 data "aws_partition" "current" {
@@ -44,7 +45,7 @@ data "aws_iam_policy_document" "config" {
 resource "aws_iam_role" "this" {
   count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
-  name               = "config-continuous-monitoring"
+  name               = "terraform-config-continuous-monitoring"
   assume_role_policy = data.aws_iam_policy_document.config_assume_role[0].json
   tags               = var.tags
 }
@@ -52,7 +53,7 @@ resource "aws_iam_role" "this" {
 resource "aws_iam_role_policy" "this" {
   count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
-  name   = "config-continuous-monitoring"
+  name   = "terraform-config-continuous-monitoring"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.config[0].json
 }
@@ -67,7 +68,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_sns_topic" "this" {
   count = var.create_config ? 1 : 0
 
-  name = "config-topic"
+  name = "terraform-config-topic"
 }
 
 resource "aws_config_configuration_recorder" "this" {
@@ -77,8 +78,9 @@ resource "aws_config_configuration_recorder" "this" {
   role_arn = local.iam_role_arn
 
   recording_group {
-    all_supported                 = "true"
-    include_global_resource_types = "true"
+    all_supported                 = local.record_all
+    include_global_resource_types = local.record_all
+    resource_types                = var.include_resource_types
   }
 
   depends_on = [
