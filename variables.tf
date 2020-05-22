@@ -16,6 +16,12 @@ variable "account_id" {
   default     = null
 }
 
+variable "include_resource_types" {
+  description = "A list that specifies the types of AWS resources for which AWS Config records configuration changes. See AWS documenation for types https://docs.aws.amazon.com/config/latest/APIReference/API_ResourceIdentifier.html#config-Type-ResourceIdentifier-resourceType"
+  type        = list(string)
+  default     = []
+}
+
 variable "config_bucket" {
   description = "Name of S3 bucket for AWS Config inventory; bucket must already exist"
   type        = string
