@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### 1.0.6
+
+**Released**: 2020.05.26
+
+**Commit Delta**: [Change from 1.0.5 release](https://github.com/plus3it/terraform-aws-tardigrade-config/compare/1.0.5...1.0.6)
+
+**Summary**:
+
+*   Add support for excluding specific resource types
+
 ### 1.0.5
 
 **Released**: 2020.05.22
