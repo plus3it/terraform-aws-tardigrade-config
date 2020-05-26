@@ -17,7 +17,13 @@ variable "account_id" {
 }
 
 variable "include_resource_types" {
-  description = "A list that specifies the types of AWS resources for which AWS Config records configuration changes. See AWS documenation for types https://docs.aws.amazon.com/config/latest/APIReference/API_ResourceIdentifier.html#config-Type-ResourceIdentifier-resourceType"
+  description = "A list of specific resource types for AWS Config to records changes to. See AWS documenation for types https://docs.aws.amazon.com/config/latest/APIReference/API_ResourceIdentifier.html#config-Type-ResourceIdentifier-resourceType"
+  type        = list(string)
+  default     = []
+}
+
+variable "exclude_resource_types" {
+  description = "A list of specific resource types for AWS Config to not records changes to. This variable is mutually exclusive from `include_resource_types` and if both are set, `include_resource_types` will take priority. See AWS documenation for types https://docs.aws.amazon.com/config/latest/APIReference/API_ResourceIdentifier.html#config-Type-ResourceIdentifier-resourceType"
   type        = list(string)
   default     = []
 }

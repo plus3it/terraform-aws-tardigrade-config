@@ -2,8 +2,9 @@ provider "aws" {
 }
 
 locals {
-  iam_role_arn = var.iam_role_arn == null ? join("", aws_iam_role.this.*.arn) : var.iam_role_arn
-  record_all   = length(var.include_resource_types) == 0 ? true : false
+  iam_role_arn   = var.iam_role_arn == null ? join("", aws_iam_role.this.*.arn) : var.iam_role_arn
+  record_all     = length(var.include_resource_types) == 0 && length(var.exclude_resource_types) == 0
+  resource_types = length(var.include_resource_types) > 0 ? var.include_resource_types : setsubtract(local.all_resource_types, var.exclude_resource_types)
 }
 
 data "aws_partition" "current" {
@@ -80,7 +81,7 @@ resource "aws_config_configuration_recorder" "this" {
   recording_group {
     all_supported                 = local.record_all
     include_global_resource_types = local.record_all
-    resource_types                = var.include_resource_types
+    resource_types                = local.record_all ? [] : local.resource_types
   }
 
   depends_on = [
