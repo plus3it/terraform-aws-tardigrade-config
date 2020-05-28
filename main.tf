@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "config" {
 resource "aws_iam_role" "this" {
   count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
-  name               = "terraform-config-continuous-monitoring"
+  name               = "config-continuous-monitoring"
   assume_role_policy = data.aws_iam_policy_document.config_assume_role[0].json
   tags               = var.tags
 }
@@ -54,7 +54,7 @@ resource "aws_iam_role" "this" {
 resource "aws_iam_role_policy" "this" {
   count = var.create_config && var.iam_role_arn == null ? 1 : 0
 
-  name   = "terraform-config-continuous-monitoring"
+  name   = "config-continuous-monitoring"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.config[0].json
 }
@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_sns_topic" "this" {
   count = var.create_config ? 1 : 0
 
-  name = "terraform-config-topic"
+  name = "config-topic"
 }
 
 resource "aws_config_configuration_recorder" "this" {
