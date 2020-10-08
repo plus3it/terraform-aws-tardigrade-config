@@ -1,6 +1,3 @@
-provider "aws" {
-}
-
 locals {
   iam_role_arn   = var.iam_role_arn == null ? join("", aws_iam_role.this.*.arn) : var.iam_role_arn
   record_all     = length(var.include_resource_types) == 0 && length(var.exclude_resource_types) == 0
@@ -11,7 +8,7 @@ data "aws_partition" "current" {
 }
 
 data "aws_iam_policy_document" "config_assume_role" {
-  count = var.create_config && var.iam_role_arn == null ? 1 : 0
+  count = var.iam_role_arn == null ? 1 : 0
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -24,7 +21,7 @@ data "aws_iam_policy_document" "config_assume_role" {
 }
 
 data "aws_iam_policy_document" "config" {
-  count = var.create_config && var.iam_role_arn == null ? 1 : 0
+  count = var.iam_role_arn == null ? 1 : 0
 
   statement {
     actions   = ["s3:PutObject*"]
@@ -44,7 +41,7 @@ data "aws_iam_policy_document" "config" {
 }
 
 resource "aws_iam_role" "this" {
-  count = var.create_config && var.iam_role_arn == null ? 1 : 0
+  count = var.iam_role_arn == null ? 1 : 0
 
   name               = "config-continuous-monitoring"
   assume_role_policy = data.aws_iam_policy_document.config_assume_role[0].json
@@ -52,7 +49,7 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy" "this" {
-  count = var.create_config && var.iam_role_arn == null ? 1 : 0
+  count = var.iam_role_arn == null ? 1 : 0
 
   name   = "config-continuous-monitoring"
   role   = aws_iam_role.this[0].id
@@ -60,20 +57,18 @@ resource "aws_iam_role_policy" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  count = var.create_config && var.iam_role_arn == null ? 1 : 0
+  count = var.iam_role_arn == null ? 1 : 0
 
   role       = aws_iam_role.this[0].name
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSConfigRole"
 }
 
 resource "aws_sns_topic" "this" {
-  count = var.create_config ? 1 : 0
 
   name = "config-topic"
 }
 
 resource "aws_config_configuration_recorder" "this" {
-  count = var.create_config ? 1 : 0
 
   name     = var.name
   role_arn = local.iam_role_arn
@@ -91,11 +86,10 @@ resource "aws_config_configuration_recorder" "this" {
 }
 
 resource "aws_config_delivery_channel" "this" {
-  count = var.create_config ? 1 : 0
 
   name           = var.name
   s3_bucket_name = var.config_bucket
-  sns_topic_arn  = aws_sns_topic.this[0].arn
+  sns_topic_arn  = aws_sns_topic.this.arn
 
   snapshot_delivery_properties {
     delivery_frequency = var.snapshot_delivery_frequency
@@ -105,10 +99,8 @@ resource "aws_config_delivery_channel" "this" {
 }
 
 resource "aws_config_configuration_recorder_status" "this" {
-  count = var.create_config ? 1 : 0
 
-  name       = aws_config_configuration_recorder.this[0].name
+  name       = aws_config_configuration_recorder.this.name
   is_enabled = true
   depends_on = [aws_config_delivery_channel.this]
 }
-

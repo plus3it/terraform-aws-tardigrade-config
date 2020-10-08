@@ -1,9 +1,3 @@
-variable "create_config" {
-  description = "Controls whether to create the AWS Config"
-  type        = bool
-  default     = true
-}
-
 variable "name" {
   description = "Name of the AWS Config recorder"
   type        = string

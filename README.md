@@ -22,7 +22,6 @@ Manage AWS Config
 |------|-------------|------|---------|:--------:|
 | account\_id | AWS Account ID | `string` | `null` | no |
 | config\_bucket | Name of S3 bucket for AWS Config inventory; bucket must already exist | `string` | `null` | no |
-| create\_config | Controls whether to create the AWS Config | `bool` | `true` | no |
 | exclude\_resource\_types | A list of specific resource types for AWS Config to not records changes to. This variable is mutually exclusive from `include_resource_types` and if both are set, `include_resource_types` will take priority. See AWS documenation for types https://docs.aws.amazon.com/config/latest/APIReference/API_ResourceIdentifier.html#config-Type-ResourceIdentifier-resourceType | `list(string)` | `[]` | no |
 | iam\_role\_arn | (Optional) ARN for the IAM role to attach to the config recorder. If blank, a minimal role will be created | `string` | `null` | no |
 | include\_resource\_types | A list of specific resource types for AWS Config to records changes to. See AWS documenation for types https://docs.aws.amazon.com/config/latest/APIReference/API_ResourceIdentifier.html#config-Type-ResourceIdentifier-resourceType | `list(string)` | `[]` | no |
