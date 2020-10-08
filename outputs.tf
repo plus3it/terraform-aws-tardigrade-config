@@ -11,16 +11,16 @@ output "config_iam_role_name" {
 
 output "config_recorder_id" {
   description = "The name of the AWS Config recorder"
-  value       = join("", aws_config_configuration_recorder.this.*.id)
+  value       = aws_config_configuration_recorder.this.id
 }
 
 output "config_delivery_channel_id" {
   description = "The name of the AWS Config delivery channel"
-  value       = join("", aws_config_delivery_channel.this.*.id)
+  value       = aws_config_delivery_channel.this.id
 }
 
 output "config_sns_topic_arn" {
   description = "The Amazon Resource Name (ARN) of the config SNS topic"
-  value       = join("", aws_sns_topic.this.*.arn)
+  value       = aws_sns_topic.this.arn
 }
 
