@@ -4,9 +4,6 @@ provider aws {
 
 module exclude_specific_resources {
   source = "../../"
-  providers = {
-    aws = aws
-  }
 
   name          = "tardigrade-config-${random_string.this.result}"
   config_bucket = aws_s3_bucket.this.id
