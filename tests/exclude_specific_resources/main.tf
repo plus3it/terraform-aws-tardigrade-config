@@ -9,7 +9,6 @@ module exclude_specific_resources {
   }
 
   name          = "tardigrade-config-${random_string.this.result}"
-  account_id    = data.aws_caller_identity.current.account_id
   config_bucket = aws_s3_bucket.this.id
 
   exclude_resource_types = [

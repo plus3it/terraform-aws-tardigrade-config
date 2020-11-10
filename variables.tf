@@ -3,17 +3,10 @@ variable config_bucket {
   type        = string
 }
 
-
 variable name {
   description = "Name of the AWS Config recorder"
   type        = string
   default     = "default"
-}
-
-variable account_id {
-  description = "AWS Account ID"
-  type        = string
-  default     = null
 }
 
 variable include_resource_types {

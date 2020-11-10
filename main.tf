@@ -71,6 +71,8 @@ locals {
 
 data aws_partition current {}
 
+data aws_caller_identity current {}
+
 data aws_iam_policy_document config_assume_role {
   count = local.create_iam_role ? 1 : 0
 
@@ -89,7 +91,7 @@ data aws_iam_policy_document config {
 
   statement {
     actions   = ["s3:PutObject*"]
-    resources = ["arn:${data.aws_partition.current.partition}:s3:::${var.config_bucket}/AWSLogs/${var.account_id}/*"]
+    resources = ["arn:${data.aws_partition.current.partition}:s3:::${var.config_bucket}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
 
     condition {
       test     = "StringLike"
