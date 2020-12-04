@@ -1,4 +1,4 @@
-resource aws_config_configuration_recorder this {
+resource "aws_config_configuration_recorder" "this" {
   name     = var.name
   role_arn = local.create_iam_role ? aws_iam_role.this[0].arn : var.iam_role_arn
 
@@ -14,7 +14,7 @@ resource aws_config_configuration_recorder this {
   ]
 }
 
-resource aws_config_delivery_channel this {
+resource "aws_config_delivery_channel" "this" {
   name           = var.name
   s3_bucket_name = var.config_bucket
   sns_topic_arn  = aws_sns_topic.this.arn
@@ -28,7 +28,7 @@ resource aws_config_delivery_channel this {
   ]
 }
 
-resource aws_config_configuration_recorder_status this {
+resource "aws_config_configuration_recorder_status" "this" {
   name       = aws_config_configuration_recorder.this.name
   is_enabled = true
   depends_on = [
@@ -36,7 +36,7 @@ resource aws_config_configuration_recorder_status this {
   ]
 }
 
-resource aws_iam_role this {
+resource "aws_iam_role" "this" {
   count = local.create_iam_role ? 1 : 0
 
   name               = "config-continuous-monitoring"
@@ -44,7 +44,7 @@ resource aws_iam_role this {
   tags               = var.tags
 }
 
-resource aws_iam_role_policy this {
+resource "aws_iam_role_policy" "this" {
   count = local.create_iam_role ? 1 : 0
 
   name   = "config-continuous-monitoring"
@@ -52,14 +52,14 @@ resource aws_iam_role_policy this {
   policy = data.aws_iam_policy_document.config[0].json
 }
 
-resource aws_iam_role_policy_attachment this {
+resource "aws_iam_role_policy_attachment" "this" {
   count = local.create_iam_role ? 1 : 0
 
   role       = aws_iam_role.this[0].name
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSConfigRole"
 }
 
-resource aws_sns_topic this {
+resource "aws_sns_topic" "this" {
   name = "config-topic"
 }
 
@@ -69,11 +69,11 @@ locals {
   resource_types  = length(var.include_resource_types) > 0 ? var.include_resource_types : setsubtract(local.all_resource_types, var.exclude_resource_types)
 }
 
-data aws_partition current {}
+data "aws_partition" "current" {}
 
-data aws_caller_identity current {}
+data "aws_caller_identity" "current" {}
 
-data aws_iam_policy_document config_assume_role {
+data "aws_iam_policy_document" "config_assume_role" {
   count = local.create_iam_role ? 1 : 0
 
   statement {
@@ -86,7 +86,7 @@ data aws_iam_policy_document config_assume_role {
   }
 }
 
-data aws_iam_policy_document config {
+data "aws_iam_policy_document" "config" {
   count = local.create_iam_role ? 1 : 0
 
   statement {

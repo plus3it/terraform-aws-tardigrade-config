@@ -1,8 +1,8 @@
-provider aws {
+provider "aws" {
   region = "us-east-1"
 }
 
-module include_and_exclude {
+module "include_and_exclude" {
   source = "../../"
 
   name          = "tardigrade-config-${random_string.this.result}"
@@ -19,16 +19,16 @@ module include_and_exclude {
   ]
 }
 
-resource random_string this {
+resource "random_string" "this" {
   length  = 6
   number  = false
   upper   = false
   special = false
 }
 
-resource aws_s3_bucket this {
+resource "aws_s3_bucket" "this" {
   bucket        = "tardigrade-config-${random_string.this.result}"
   force_destroy = true
 }
 
-data aws_caller_identity current {}
+data "aws_caller_identity" "current" {}
