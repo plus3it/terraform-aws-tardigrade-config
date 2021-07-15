@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
-
 module "exclude_specific_resources" {
   source = "../../"
 
