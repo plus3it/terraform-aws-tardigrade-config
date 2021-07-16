@@ -30,7 +30,7 @@ jobs:
       script: make mockstack/pytest
       after_script:
         - make mockstack/clean
-   - stage: deploy
+    - stage: deploy
       if: branch = master AND type = push AND repo = plus3it/terraform-aws-tardigrade-config
       before_script:
         - |
