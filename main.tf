@@ -56,7 +56,7 @@ resource "aws_iam_role_policy_attachment" "this" {
   count = local.create_iam_role ? 1 : 0
 
   role       = aws_iam_role.this[0].name
-  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSConfigRole"
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
 resource "aws_sns_topic" "this" {
