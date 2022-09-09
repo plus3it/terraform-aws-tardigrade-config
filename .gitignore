@@ -15,5 +15,6 @@ tardigrade-ci/
 # terraform lock file
 .terraform.lock.hcl
 
-# Cache created by pytest (integration tests)
-tests/__pycache__/
+# Python auto-generated files
+__pycache__
+*.pyc
