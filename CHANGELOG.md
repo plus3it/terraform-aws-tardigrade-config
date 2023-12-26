@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### [4.0.0](https://github.com/plus3it/terraform-aws-tardigrade-config/releases/tag/4.0.0)
+
+**Released**: 2023.12.26
+
+**Summary**:
+
+*   Adds native support for excluded or included resource types
+*   Supports all features available as of terraform-provider-aws v5.31.0
+*   Uses service-linked-role exclusively, removing custom IAM role
+
 ### 3.0.2
 
 **Released**: 2022.06.03
