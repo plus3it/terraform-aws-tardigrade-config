@@ -4,18 +4,6 @@ module "config" {
   config = {
     configuration_recorder = {
       name = "tardigrade-config-${random_string.this.result}"
-      recording_group = {
-        all_supported = false
-
-        recording_strategy = {
-          use_only = "INCLUSION_BY_RESOURCE_TYPES"
-        }
-
-        resource_types = [
-          "AWS::EC2::Instance",
-          "AWS::CloudTrail::Trail",
-        ]
-      }
     }
 
     delivery_channel = {
