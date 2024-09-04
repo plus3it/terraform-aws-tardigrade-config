@@ -5,6 +5,10 @@ variable "config" {
       name       = string
       is_enabled = optional(bool, true)
 
+      role = optional(object({
+        arn = string
+      }))
+
       recording_group = optional(object({
         all_supported                 = optional(bool, true)
         include_global_resource_types = optional(bool)
