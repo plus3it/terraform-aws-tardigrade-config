@@ -1,6 +1,6 @@
 resource "aws_config_configuration_recorder" "this" {
   name     = var.config.configuration_recorder.name
-  role_arn = aws_iam_service_linked_role.config.arn
+  role_arn = var.config.configuration_recorder.role == null ? aws_iam_service_linked_role.config[0].arn : var.config.configuration_recorder.role.arn
 
   dynamic "recording_group" {
     for_each = var.config.configuration_recorder.recording_group != null ? [var.config.configuration_recorder.recording_group] : []
@@ -51,5 +51,7 @@ resource "aws_config_configuration_recorder_status" "this" {
 }
 
 resource "aws_iam_service_linked_role" "config" {
+  count = var.config.configuration_recorder.role == null ? 1 : 0
+
   aws_service_name = "config.amazonaws.com"
 }
