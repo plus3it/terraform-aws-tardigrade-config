@@ -22,6 +22,16 @@ variable "config" {
           use_only = string
         }))
       }))
+
+      recording_mode = optional(object({
+        recording_frequency = string
+
+        recording_mode_override = optional(object({
+          description         = optional(string)
+          resource_types      = list(string)
+          recording_frequency = string
+        }))
+      }))
     })
 
     delivery_channel = object({
