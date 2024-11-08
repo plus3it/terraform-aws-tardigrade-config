@@ -24,6 +24,22 @@ resource "aws_config_configuration_recorder" "this" {
       }
     }
   }
+
+  dynamic "recording_mode" {
+    for_each = var.config.configuration_recorder.recording_mode != null ? [var.config.configuration_recorder.recording_mode] : []
+    content {
+      recording_frequency = recording_mode.value.recording_frequency
+
+      dynamic "recording_mode_override" {
+        for_each = recording_mode.value.recording_mode_override != null ? [recording_mode.value.recording_mode_override] : []
+        content {
+          description         = recording_mode_override.value.description
+          resource_types      = recording_mode_override.value.resource_types
+          recording_frequency = recording_mode_override.value.recording_frequency
+        }
+      }
+    }
+  }
 }
 
 resource "aws_config_delivery_channel" "this" {
