@@ -52,7 +52,7 @@ resource "aws_config_delivery_channel" "this" {
   dynamic "snapshot_delivery_properties" {
     for_each = var.config.delivery_channel.snapshot_delivery_properties != null ? [var.config.delivery_channel.snapshot_delivery_properties] : []
     content {
-      delivery_frequency = snapshot_delivery_properties.delivery_frequency
+      delivery_frequency = snapshot_delivery_properties.value.delivery_frequency
     }
   }
 }
