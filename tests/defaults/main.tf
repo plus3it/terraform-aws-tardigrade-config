@@ -8,6 +8,9 @@ module "config" {
 
     delivery_channel = {
       s3_bucket_name = aws_s3_bucket_policy.this.id
+      snapshot_delivery_properties = {
+        delivery_frequency = "One_Hour"
+      }
     }
   }
 }
